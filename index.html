@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10251e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Catatan Keuangan Pribadi</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#17251f;--muted:#68776f;--line:#dce5df;--green:#176b4a;--green2:#e8f4ed;--red:#b33b3b;--amber:#946200;--shadow:0 8px 28px #183c2910}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:#10251e;color:#fff;padding:25px max(18px,calc((100% - 1120px)/2)) 22px}
+header h1{margin:0 0 5px;font-size:25px}header p{margin:0;color:#c7d7cd;font-size:13px}
+main{max-width:1120px;margin:20px auto;padding:0 16px 50px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--shadow)}
+.kpi small{display:block;color:var(--muted);font-size:12px}.kpi strong{display:block;font-size:22px;margin-top:5px;overflow-wrap:anywhere}
+.tabs{display:flex;gap:7px;overflow:auto;margin:14px 0}.tab{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:999px;white-space:nowrap;cursor:pointer}.tab.active{background:var(--green);border-color:var(--green);color:#fff}
+section{display:none}section.active{display:block}.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.panel h2{font-size:18px;margin:0 0 12px}.panel h3{font-size:15px;margin:16px 0 8px}
+label{display:block;font-size:12px;color:var(--muted);margin:9px 0 4px}input,select,textarea{width:100%;border:1px solid #ccd8d0;border-radius:9px;padding:10px 11px;font:inherit;background:#fff;color:var(--ink)}textarea{min-height:66px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:9px;background:var(--green);color:white;padding:10px 14px;font-weight:650;cursor:pointer;margin-top:12px}.btn.secondary{background:#e9efeb;color:var(--ink)}.btn.danger{background:#fff0f0;color:var(--red);border:1px solid #f0d0d0}.muted{color:var(--muted);font-size:12px}.money{font-variant-numeric:tabular-nums}.list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:11px;padding:11px;display:flex;gap:10px;align-items:flex-start}.item input[type=checkbox]{width:19px;height:19px;margin:2px 0;accent-color:var(--green);flex:0 0 auto}.item .body{flex:1;min-width:0}.item .amt{font-weight:700;white-space:nowrap}.item.done{background:#f2f8f4}.item.done .name{text-decoration:line-through;color:var(--muted)}.item small{display:block;color:var(--muted);font-size:11px}.item .actions{display:flex;gap:5px}.item button{border:0;background:transparent;color:var(--muted);cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.notice{background:#fff8e8;border:1px solid #f0dfb5;color:#6f520e;padding:11px;border-radius:10px;font-size:12px;margin:10px 0}
+.pill{display:inline-block;background:var(--green2);color:var(--green);padding:3px 8px;border-radius:99px;font-size:11px}
+.bar{height:9px;background:#e8eeea;border-radius:99px;overflow:hidden;margin:7px 0}.bar span{display:block;height:100%;background:var(--green)}
+footer{color:var(--muted);font-size:11px;text-align:center;margin:20px}
+@media(max-width:760px){.summary{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.kpi strong{font-size:19px}main{margin-top:12px}}
+</style>
+</head>
+<body>
+<header><h1>Catatan Keuangan Pribadi</h1><p>25 November 2026 – 25 November 2028 · Rupiah otomatis · tersimpan di browser perangkat ini</p></header>
+<main>
+<div class="summary">
+ <div class="card kpi"><small>Saldo tercatat</small><strong id="balance">Rp0</strong></div>
+ <div class="card kpi"><small>Total pemasukan</small><strong id="incomeTotal">Rp0</strong></div>
+ <div class="card kpi"><small>Total pengeluaran</small><strong id="expenseTotal">Rp0</strong></div>
+ <div class="card kpi"><small>Tabungan berhasil</small><strong id="savedTotal">Rp0</strong></div>
+</div>
+<div class="tabs">
+ <button class="tab active" data-tab="overview">Ringkasan</button><button class="tab" data-tab="checklist">Checklist pendapatan</button><button class="tab" data-tab="transaction">Catat transaksi</button><button class="tab" data-tab="savings">Tabungan & bank</button><button class="tab" data-tab="fuel">Bensin aktual</button><button class="tab" data-tab="history">Riwayat</button>
+</div>
+<section id="overview" class="active">
+ <div class="grid">
+  <div class="panel"><h2>Ringkasan rencana</h2><div id="overviewText"></div>
+   <div class="notice">Gaji pertama dijadwalkan 1 Januari 2027 (periode tutup buku 25 Desember 2026). Gaji November 2026 tidak dimasukkan. Checklist pendapatan belum otomatis dianggap diterima sebelum ditandai ✓.</div>
+  </div>
+  <div class="panel"><h2>Alokasi bulanan rencana</h2><div id="budgetList"></div><p class="muted">Pertalite dan Pertamax adalah anggaran kasar. Catat harga aktual di tab “Bensin aktual” setelah pembelian.</p><h2 style="margin-top:20px">Monitor pengeluaran pribadi bulan ini</h2><div id="personalMonitor"></div><p class="muted">Setiap transaksi kategori pribadi otomatis mengurangi sisa anggaran kategori dan saldo rekening. Contoh: makan Rp55.000 dari anggaran Rp100.000 → sisa Rp45.000.</p></div>
+ </div>
+</section>
+<section id="checklist">
+ <div class="grid">
+  <div class="panel"><h2>Checklist pendapatan</h2><p class="muted">Centang hanya setelah uang benar-benar diterima. Tanggal penerimaan dan rekening dapat diisi saat menandai.</p><div id="incomeChecklist" class="list"></div></div>
+  <div class="panel"><h2>THR dan pembagian dapur</h2><div class="notice">THR sebenarnya Rp5.300.000. Sebanyak 50% (Rp2.650.000) dialokasikan untuk dapur; sisanya Rp2.650.000 menjadi bagian yang dapat dicatat sebagai pendapatan/tujuan lain. Jangan hitung seluruh THR sebagai uang bebas.</div><div id="thrBox"></div></div>
+ </div>
+</section>
+<section id="transaction">
+ <div class="grid">
+  <div class="panel"><h2>Tambah pemasukan / pengeluaran</h2>
+   <label>Jenis transaksi</label><select id="kind"><option value="expense">Pengeluaran</option><option value="income">Pemasukan</option><option value="saving">Setoran tabungan (pindah ke aset)</option><option value="bill">Pembayaran tagihan</option></select>
+   <label>Kategori pengeluaran pribadi (untuk monitor anggaran)</label><select id="personalCategory"><option value="">Otomatis / bukan pribadi</option><option value="makan">Makan · Rp100.000</option><option value="pertalite">Pertalite · Rp200.000</option><option value="pertamax">Pertamax · Rp300.000 (mulai Apr 2027)</option><option value="internet">Internet · Rp100.000</option><option value="kopi">Kopi · Rp100.000</option><option value="badminton">Badminton · Rp100.000</option><option value="perawatan">Perawatan diri · Rp100.000</option><option value="tak terduga">Tak terduga · Rp100.000</option><option value="oli">Oli · Rp50.000</option></select>
+   <label>Keterangan (contoh: makan pisang 15k)</label><input id="desc" placeholder="makan pisang 15k">
+   <div class="row"><div><label>Nominal</label><input id="amount" placeholder="15k / 1.0 / 1.000.000"></div><div><label>Tanggal & jam</label><input id="datetime" type="datetime-local"></div></div>
+   <label>Rekening / tempat uang</label><select id="account"></select>
+   <label>Catatan tambahan</label><textarea id="note" placeholder="Opsional — merek bensin, harga per liter, bukti, dll."></textarea>
+   <button class="btn" id="addTx">Simpan transaksi</button><p class="muted">Contoh konversi: 1.0 = Rp1.000.000 · 100K = Rp100.000 · 15k = Rp15.000. Sistem juga menerima angka penuh.</p>
+  </div>
+  <div class="panel"><h2>Contoh pembacaan otomatis</h2><div class="notice">Jika kamu mengetik “makan pisang 15k”, sistem mengenali keterangan “makan pisang” dan nominal Rp15.000. Tanggal dan jam otomatis diisi saat ini, tetapi bisa diubah.</div><h3>Tagihan terjadwal</h3><div id="bills"></div><h3>Barang target</h3><table><tr><th>Barang</th><th>Target</th></tr><tr><td>NMAX NEO · 1 April 2027</td><td>Rp36.000.000</td></tr><tr><td>Laptop ASUS · tahun 2027</td><td>Rp10.000.000</td></tr></table></div>
+ </div>
+</section>
+<section id="savings">
+ <div class="grid">
+  <div class="panel"><h2>Saldo tabungan per bank / e-wallet</h2><p class="muted">Pilih rekening saat mencatat setoran tabungan. Saldo per rekening dihitung dari transaksi yang dicatat di aplikasi ini.</p><div id="accountBalances"></div></div>
+  <div class="panel"><h2>Catat modal awal</h2>
+   <label>Tabungan saat ini</label><input id="initial1" value="15000000">
+   <label>Tabungan proyek cair</label><input id="initial2" value="11400000">
+   <label>Simpan modal awal ke rekening</label><select id="initialAccount"></select>
+   <button class="btn" id="saveInitial">Simpan / perbarui modal awal</button>
+   <p class="muted">Modal awal total Rp26.400.000. Memperbarui modal awal tidak menghapus transaksi lain.</p>
+  </div>
+ </div>
+</section>
+<section id="fuel">
+ <div class="grid">
+  <div class="panel"><h2>Catat pembelian bensin aktual</h2>
+   <label>Jenis bensin</label><select id="fuelType"><option>Pertalite</option><option>Pertamax</option></select>
+   <div class="row"><div><label>Harga dibayar (Rp)</label><input id="fuelPrice" placeholder="mis. 25.000"></div><div><label>Liter (opsional)</label><input id="fuelLiter" placeholder="mis. 2.5"></div></div>
+   <label>Tanggal & jam pembelian</label><input id="fuelDate" type="datetime-local">
+   <label>Catatan (SPBU, harga/liter, odometer, dll.)</label><textarea id="fuelNote" placeholder="Isi harga setelah benar-benar membeli"></textarea>
+   <button class="btn" id="addFuel">Simpan pembelian bensin</button>
+  </div>
+  <div class="panel"><h2>Catatan pembelian bensin</h2><div id="fuelHistory"></div><p class="muted">Pembelian bensin yang disimpan juga masuk ke riwayat pengeluaran agar total pengeluaran aktual ikut terhitung.</p></div>
+ </div>
+</section>
+<section id="history">
+ <div class="panel"><h2>Semua transaksi</h2><div class="row"><div><label>Filter jenis</label><select id="filterKind"><option value="all">Semua</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option><option value="saving">Tabungan</option><option value="bill">Tagihan</option></select></div><div><label>Cari keterangan</label><input id="search" placeholder="Cari..."></div></div><div id="historyList"></div><button class="btn secondary" id="export">Unduh CSV</button> <button class="btn danger" id="reset">Hapus seluruh data aplikasi</button></div>
+</section>
+<footer>Data disimpan lokal di browser perangkat ini. Ekspor CSV secara berkala sebagai cadangan. Data tidak otomatis tersinkron ke perangkat lain.</footer>
+</main>
+<script>
+const ACCOUNTS=['SeaBank','Neo Bank','Bank Jago','GoPay','DANA','OVO','Bank Mandiri','BRI','Tunai','Bank lain A','Bank lain B','Bank lain C'];
+
+const PERSONAL_BUDGETS=[['makan',100000],['pertalite',200000],['pertamax',300000],['internet',100000],['kopi',100000],['badminton',100000],['perawatan',100000],['tak terduga',100000],['oli',50000]];
+function detectPersonalCategory(desc){
+ const d=(desc||'').toLowerCase();
+ if(/makan|nasi|pisang|roti|sarapan|siang|malam/.test(d))return 'makan';
+ if(/pertalite/.test(d))return 'pertalite'; if(/pertamax/.test(d))return 'pertamax';
+ if(/internet|wifi|kuota|paket data/.test(d))return 'internet';
+ if(/kopi|coffee/.test(d))return 'kopi'; if(/badminton|bulu tangkis/.test(d))return 'badminton';
+ if(/sunscreen|sabun|shampoo|sampo|face wash|skincare|perawatan/.test(d))return 'perawatan';
+ if(/tak terduga|darurat|lain-lain|lain lain/.test(d))return 'tak terduga';
+ if(/oli/.test(d))return 'oli'; return '';
+}
+function monthKey(date){return (date||'').slice(0,7)}
+const fmt=n=>'Rp'+Math.round(Number(n)||0).toLocaleString('id-ID');
+const parseMoney=s=>{
+ if(typeof s==='number')return s;
+ let v=String(s||'').trim().toLowerCase().replace(/rp/g,'').replace(/\s/g,'');
+ if(!v)return NaN;
+ // 1.0 means one million; 100k means one hundred thousand.
+ const suffix=v.match(/^(-?[\d.,]+)(k|rb|ribu|jt|juta|m)$/);
+ if(suffix){let x=Number(suffix[1].replace(/\./g,'').replace(',','.'));return x*(['jt','juta','m'].includes(suffix[2])?1000000:1000)}
+ if(/^\d+([.,]0)$/.test(v))return Number(v.replace(/[.,]0$/,''))*1000000;
+ v=v.replace(/\./g,'').replace(/,/g,'.');return Number(v);
+};
+const nowLocal=()=>{let d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
+let data=JSON.parse(localStorage.getItem('keuangan_v1')||'null')||{tx:[],incomeDone:{},initial:26400000,initialAccount:'Bank Mandiri',fuel:[]};
+const save=()=>localStorage.setItem('keuangan_v1',JSON.stringify(data));
+const payDates=Array.from({length:24},(_,i)=>{let d=new Date(2027,i,1);return d.toISOString().slice(0,10)});
+const incomeItems=[];
+payDates.forEach((date,i)=>{const tag=date.slice(0,7);incomeItems.push({id:'salary_'+tag,name:'Gaji',amount:5100000,frequency:'Gajian '+date});incomeItems.push({id:'allowance_'+tag,name:'Tunjangan',amount:833333,frequency:'Gajian '+date});incomeItems.push({id:'bonus1_'+tag,name:'Bonus 1',amount:66666,frequency:'Gajian '+date});incomeItems.push({id:'overtime_'+tag,name:'Lembur (opsional)',amount:460000,frequency:'Opsional · '+date});});
+[2027,2028].forEach(y=>{incomeItems.push({id:'thr_'+y,name:'THR '+y,amount:5300000,frequency:'Tahunan '+y+' · 50% dapur'});incomeItems.push({id:'leave_'+y,name:'Cuti '+y,amount:5300000,frequency:'Tahunan '+y});incomeItems.push({id:'bonus2_'+y,name:'Bonus 2 '+y,amount:6000000,frequency:'Tahunan '+y});incomeItems.push({id:'health_'+y,name:'Kesehatan '+y,amount:3000000,frequency:'Tahunan '+y});});
+function accountOptions(id){return ACCOUNTS.map(a=>`<option ${a===id?'selected':''}>${a}</option>`).join('')}
+function initSelects(){['account','initialAccount'].forEach(id=>document.getElementById(id).innerHTML=accountOptions(id==='initialAccount'?data.initialAccount:'Tunai'))}
+function render(){
+ const inc=data.tx.filter(t=>t.kind==='income').reduce((s,t)=>s+t.amount,0);
+ const exp=data.tx.filter(t=>['expense','bill'].includes(t.kind)).reduce((s,t)=>s+t.amount,0);
+ const sav=data.initial+data.tx.filter(t=>t.kind==='saving').reduce((s,t)=>s+t.amount,0);
+ const cashflow= data.initial+inc-exp-data.tx.filter(t=>t.kind==='saving').reduce((s,t)=>s+t.amount,0);
+ document.getElementById('balance').textContent=fmt(cashflow);
+ document.getElementById('incomeTotal').textContent=fmt(inc);
+ document.getElementById('expenseTotal').textContent=fmt(exp);
+ document.getElementById('savedTotal').textContent=fmt(sav);
+ document.getElementById('overviewText').innerHTML=`<p><b>Modal awal:</b> ${fmt(data.initial)}</p><p><b>Pendapatan rutin rencana:</b> ${fmt(5999999)} × 24 = ${fmt(143999976)}</p><p><b>Pendapatan tahunan rencana:</b> THR Rp5.300.000 (Rp2.650.000 dapur), cuti Rp5.300.000, Bonus 2 Rp6.000.000, kesehatan Rp3.000.000.</p><p><b>Potensi lembur:</b> ${fmt(460000)} per kejadian, tidak dianggap pasti.</p><p><span class="pill">Aktual</span> Saldo dan total di atas berubah berdasarkan transaksi yang benar-benar kamu catat.</p>`;
+ const budgets=[['Tabungan',2500000],['Orang tua',1500000],['Adam + Fadhil + Devan',200000],['Kebutuhan pribadi sebelum Apr 2027',850000],['Kebutuhan pribadi mulai Apr 2027',1150000]];
+ document.getElementById('budgetList').innerHTML=budgets.map(([n,a])=>`<div style="display:flex;justify-content:space-between;gap:10px;margin:9px 0"><span>${n}</span><b>${fmt(a)}</b></div>`).join('');
+
+ const thisMonth=nowLocal().slice(0,7),personalTx=data.tx.filter(t=>t.kind==='expense'&&monthKey(t.date)===thisMonth&&t.personalCategory);
+ const isAfterApr=thisMonth>='2027-04',activeBudgets=PERSONAL_BUDGETS.filter(([k])=>k!=='pertamax'||isAfterApr);
+ document.getElementById('personalMonitor').innerHTML=`<p class="muted">Periode: ${thisMonth}</p>`+activeBudgets.map(([k,b])=>{const spent=personalTx.filter(t=>t.personalCategory===k).reduce((a,t)=>a+t.amount,0),left=b-spent,pct=Math.min(100,spent/b*100);return `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;gap:8px"><b style="text-transform:capitalize">${k}</b><span>${fmt(spent)} / ${fmt(b)}</span></div><div class="bar"><span style="width:${pct}%"></span></div><small class="muted">${left>=0?'Sisa anggaran: '+fmt(left):'Melebihi anggaran: '+fmt(-left)}</small></div>`}).join('')+`<b>Total pribadi: ${fmt(personalTx.reduce((a,t)=>a+t.amount,0))}</b>`;
+ document.getElementById('incomeChecklist').innerHTML=incomeItems.map(it=>{
+ let done=data.incomeDone[it.id]||false;
+ return `<div class="item ${done?'done':''}"><input type="checkbox" data-income="${it.id}" ${done?'checked':''}><div class="body"><div class="name"><b>${it.name}</b> <span class="pill">${it.id==='thr'?'THR 50% dapur':it.frequency}</span></div><small>${fmt(it.amount)} · ${it.frequency}</small>${done?`<small>✓ Ditandai diterima · ${data.incomeDone[it.id].date||''} · ${data.incomeDone[it.id].account||''}</small>`:''}</div><span class="amt">${done?'✓':'✕'}</span></div>`}).join('');
+ document.getElementById('thrBox').innerHTML=`<table><tr><th>Alokasi THR</th><th>Nominal</th></tr><tr><td>THR diterima</td><td>${fmt(5300000)}</td></tr><tr><td>Dapur (50%)</td><td>${fmt(2650000)}</td></tr><tr><td>Sisa THR (50%)</td><td>${fmt(2650000)}</td></tr></table>`;
+ document.getElementById('bills').innerHTML='<p>1 Januari 2027 — Rp875.000</p><p>1 Februari 2027 — Rp400.000</p>';
+ let per={};per[data.initialAccount||'Bank Mandiri']=(per[data.initialAccount||'Bank Mandiri']||0)+data.initial;
+ data.tx.forEach(t=>{per[t.account]=(per[t.account]||0)+(t.kind==='income'||t.kind==='saving'?-0:0); if(t.kind==='income')per[t.account]=(per[t.account]||0)+t.amount; if(['expense','bill'].includes(t.kind))per[t.account]=(per[t.account]||0)-t.amount; if(t.kind==='saving')per[t.account]=(per[t.account]||0)+t.amount;});
+ document.getElementById('accountBalances').innerHTML=ACCOUNTS.map(a=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>${a}</span><b>${fmt(per[a]||0)}</b></div>`).join('');
+ const fuels=data.fuel.slice().reverse();
+ document.getElementById('fuelHistory').innerHTML=fuels.length?fuels.map(f=>`<div class="item"><div class="body"><b>${f.type} · ${fmt(f.price)}</b><small>${f.date} · ${f.liter?f.liter+' liter · ':''}${f.note||''}</small></div></div>`).join(''):'<p class="muted">Belum ada pembelian bensin dicatat.</p>';
+ const filter=document.getElementById('filterKind')?.value||'all',q=(document.getElementById('search')?.value||'').toLowerCase();
+ let tx=data.tx.slice().reverse().filter(t=>(filter==='all'||t.kind===filter)&&(`${t.desc} ${t.note} ${t.account}`).toLowerCase().includes(q));
+ document.getElementById('historyList').innerHTML=tx.length?`<table><tr><th>Tanggal & keterangan</th><th>Jenis / rekening</th><th>Nominal</th><th></th></tr>${tx.map(t=>`<tr><td>${t.date}<br><b>${t.desc}</b><br><small>${t.note||''}</small></td><td>${t.kind}<br>${t.account}</td><td>${fmt(t.amount)}</td><td><button onclick="delTx('${t.id}')">Hapus</button></td></tr>`).join('')}</table>`:'<p class="muted">Belum ada transaksi sesuai filter.</p>';
+}
+function delTx(id){data.tx=data.tx.filter(t=>t.id!==id);save();render()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id===b.dataset.tab));}));
+document.getElementById('datetime').value=nowLocal();document.getElementById('fuelDate').value=nowLocal();
+document.getElementById('incomeChecklist').addEventListener('change',e=>{if(!e.target.dataset.income)return;let id=e.target.dataset.income,it=incomeItems.find(x=>x.id===id);if(e.target.checked){let date=prompt('Tanggal diterima (YYYY-MM-DD)',it.frequency.match(/\\d{4}-\\d{2}-\\d{2}/)?.[0]||new Date().toISOString().slice(0,10));let account=prompt('Masuk ke rekening mana? (SeaBank, Neo Bank, Bank Jago, GoPay, DANA, OVO, Mandiri, BRI, Tunai)', 'Bank Mandiri');data.incomeDone[id]={date:date||'',account:account||''};data.tx.push({id:'income_'+id,kind:'income',desc:it.name,amount:it.amount,date:date||'',account:account||'Bank Mandiri',note:'Dari checklist pendapatan'});if(id.startsWith('thr_'))data.tx.push({id:'thr_kitchen_'+id,kind:'expense',desc:'Alokasi dapur dari THR',amount:2650000,date:date||'',account:account||'Bank Mandiri',note:'50% dari THR Rp5.300.000'});}else{delete data.incomeDone[id];data.tx=data.tx.filter(t=>t.id!=='income_'+id&&t.id!=='thr_kitchen_'+id)}save();render()});
+document.getElementById('addTx').onclick=()=>{
+ let desc=document.getElementById('desc').value.trim(),raw=document.getElementById('amount').value,amount=parseMoney(raw);
+ if(desc&&!raw){let m=desc.match(/^(.+?)\s+([\d.,]+\s*(?:k|rb|ribu|jt|juta)?)$/i);if(m){desc=m[1].trim();amount=parseMoney(m[2]);}}
+ if(!desc&&raw){let m=raw.match(/^(.+?)\s+([\d.,]+\s*(?:k|rb|ribu|jt|juta)?)$/i);if(m){desc=m[1];amount=parseMoney(m[2]);}}
+ if(!desc||!Number.isFinite(amount)||amount<=0){alert('Isi keterangan dan nominal yang benar. Contoh: makan pisang 15k');return}
+ const kind=document.getElementById('kind').value;
+ let personalCategory=document.getElementById('personalCategory').value||detectPersonalCategory(desc);
+ if(kind!=='expense')personalCategory='';
+ const txDate=document.getElementById('datetime').value.replace('T',' ');
+ data.tx.push({id:crypto.randomUUID(),kind,desc,amount,date:txDate,account:document.getElementById('account').value,note:document.getElementById('note').value,personalCategory});
+ save();document.getElementById('desc').value='';document.getElementById('amount').value='';document.getElementById('note').value='';document.getElementById('personalCategory').value='';render();alert('Transaksi tersimpan. Saldo rekening dan monitor anggaran pribadi diperbarui.');
+};
+document.getElementById('saveInitial').onclick=()=>{let a=parseMoney(document.getElementById('initial1').value),b=parseMoney(document.getElementById('initial2').value);if(!Number.isFinite(a)||!Number.isFinite(b)||a<0||b<0){alert('Nominal modal awal tidak valid');return}data.initial=a+b;data.initialAccount=document.getElementById('initialAccount').value;save();render();alert('Modal awal diperbarui.')};
+document.getElementById('addFuel').onclick=()=>{let price=parseMoney(document.getElementById('fuelPrice').value),liter=parseFloat(document.getElementById('fuelLiter').value)||0;if(!Number.isFinite(price)||price<=0){alert('Masukkan harga aktual pembelian.');return}let type=document.getElementById('fuelType').value,date=document.getElementById('fuelDate').value.replace('T',' '),note=document.getElementById('fuelNote').value;data.fuel.push({type,price,liter,date,note});data.tx.push({id:crypto.randomUUID(),kind:'expense',desc:'Bensin '+type,amount:price,date,account:document.getElementById('account').value,note:(liter?liter+' liter · ':'')+note,personalCategory:type.toLowerCase()});save();document.getElementById('fuelPrice').value='';document.getElementById('fuelLiter').value='';document.getElementById('fuelNote').value='';render();alert('Pembelian bensin dicatat sebagai pengeluaran aktual.')};
+document.getElementById('filterKind').onchange=render;document.getElementById('search').oninput=render;
+document.getElementById('export').onclick=()=>{let rows=[['Tanggal','Jenis','Keterangan','Nominal_Rp','Rekening','Catatan'],...data.tx.map(t=>[t.date,t.kind,t.desc,t.amount,t.account,t.note])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='catatan-keuangan.csv';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('reset').onclick=()=>{if(confirm('Yakin menghapus SEMUA transaksi dan data? Unduh CSV dulu jika perlu.')){localStorage.removeItem('keuangan_v1');location.reload()}};
+initSelects();render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("Service worker:", err));
+  });
+}
+</script>
+
+</body></html>
